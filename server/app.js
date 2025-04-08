@@ -16,11 +16,11 @@ app.use(express.static(path.join(__dirname, '../views')));
 
 app.post('/api/blogs', blogController.createBlog);
 app.get('/api/blogs', blogController.getAllBlogs);
+app.put('/api/blogs/:id', blogController.updateBlog);
+app.delete('/api/blogs/:id', blogController.deleteBlog);
 
 app.post('/api/register', authController.register);
 app.post('/api/login', authController.login);
-
-app.delete('/api/blogs/:id', blogController.deleteBlog);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/index.html'));

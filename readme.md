@@ -19,6 +19,15 @@ bcryptjs for pwd hasdhes
 jsonwebtoken for tokens
 
 
+2 ready made accounts in collection
+user: member1
+pwd: member1
+type: member
+
+user: admin1
+pwd: admin1
+type: admin
+
 
 2030-project  
 ===============  

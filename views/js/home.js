@@ -64,8 +64,11 @@ async function loadBlogs() {
         <p class="card-text">${blog.snippet}</p>
         <p class="card-text"><strong>Posted by:</strong> ${blog.author}</p>
         <p class="card-text"><small class="text-muted">${blog.date}</small></p>
+        <p class="card-text"><small class="text-muted">Temp at post: ${blog.temperature ?? 'N/A'}°C</small></p>
       </div>
-      `;    
+      `;
+
+      // admin can delete
       if (payload && payload.role === 'admin') {
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete';
@@ -82,6 +85,35 @@ async function loadBlogs() {
         });
         div.querySelector('.card-body').appendChild(deleteBtn);
       }
+
+      // author can edit
+      if(payload && payload.username === blog.author) {
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.classList.add('btn', 'btn-secondary', 'btn-sm', 'ms-2');
+        editBtn.addEventListener('click', () => {
+          const newTitle = prompt('Edit title:', blog.title);
+          const newContent = prompt('Edit content:', blog.snippet);
+
+          if(newTitle && newContent) {
+            fetch(`/api/blogs/${blog._id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({title: newTitle, content: newContent})
+            })
+            .then(res => res.json())
+            .then(data => {
+              alert(data.message);
+              loadBlogs();
+            });
+          }
+        });
+        div.querySelector('.card-body').appendChild(editBtn);
+      }
+
       blogList.appendChild(div);
     });
   } catch (err) {

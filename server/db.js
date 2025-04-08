@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
 
 let connection = null;
+const URI = process.env.MONGO || 'mongodb://localhost:27017/blogapp';
 
 async function connectDB() {
   if (!connection) {
-    connection = await mongoose.connect(process.env.MONGO, {
+    connection = await mongoose.connect(URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log('mongo singelton connected');
+    console.log('mongo(or local) conected');
   }
   return connection;
 }
