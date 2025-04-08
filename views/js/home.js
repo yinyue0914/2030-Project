@@ -59,13 +59,13 @@ async function loadBlogs() {
       const div = document.createElement('div');
       div.classList.add('card', 'mb-3');
       div.innerHTML = `
-        <div class="card-body">
-          <h5 class="card-title">${blog.title}</h5>
-          <p class="card-text">${blog.content}</p>
-          <p class="card-text"><strong>Posted by:</strong> ${blog.author}</p>
-          <p class="card-text"><small class="text-muted">${new Date(blog.createdAt).toLocaleDateString()}</small></p>
-        </div>
-      `;
+      <div class="card-body">
+        <h5 class="card-title">${blog.title}</h5>
+        <p class="card-text">${blog.snippet}</p>
+        <p class="card-text"><strong>Posted by:</strong> ${blog.author}</p>
+        <p class="card-text"><small class="text-muted">${blog.date}</small></p>
+      </div>
+      `;    
       if (payload && payload.role === 'admin') {
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete';
@@ -97,7 +97,7 @@ registerForm.addEventListener('submit', async (e) => {
   const username = e.target.username.value;
   const password = e.target.password.value;
   const role = e.target.role.value;
-  
+
   try {
     const res = await fetch('/api/register', {
       method: 'POST',

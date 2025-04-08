@@ -1,5 +1,6 @@
 const Blog = require('../models/blogModel');
 const jwt = require('jsonwebtoken');
+const createBlogMapper = require('../server/factories/blogFactory');
 
 exports.createBlog = async(req, res) => {
   const {title, content} = req.body;
@@ -19,10 +20,12 @@ exports.createBlog = async(req, res) => {
   console.log('Decoded token:', decoded);
   res.status(201).json({message: 'blog post created!', data: newBlog});};
 
-exports.getAllBlogs = async (req, res) => {
-  const blogs = await Blog.find().sort({createdAt: -1});
-  res.status(200).json(blogs);
-};
+  exports.getAllBlogs = async (req, res) => {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    const mapped =blogs.map(blog => createBlogMapper('preview', blog));
+    res.status(200).json(mapped);
+  };
+  
 
 exports.deleteBlog = async(req, res) => {
   const blogId = req.params.id;

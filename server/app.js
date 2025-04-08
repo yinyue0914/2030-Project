@@ -1,19 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose');
+const connectDB = require('./db');    // singleton db module
 const authController = require('../controllers/authController');
 const blogController = require('../controllers/blogController');
 
 const app = express();
 const PORT = 3000;
-
-mongoose.connect(process.env.MONGO, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('connected to mongo'))
-.catch(e => console.error('connection eror:', e));
 
 // middleware
 app.use(express.json());
@@ -27,12 +20,19 @@ app.get('/api/blogs', blogController.getAllBlogs);
 app.post('/api/register', authController.register);
 app.post('/api/login', authController.login);
 
+app.delete('/api/blogs/:id', blogController.deleteBlog);
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/index.html'));
 });
-app.delete('/api/blogs/:id', blogController.deleteBlog);
 
-// this i copied from 2600, which is why theres nice msgs with emojis
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
+// no longer a 2600 copy, this is singlton requirement
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`server running at http://localhost:${PORT}`);
+    });
+  })
+  .catch(error => {
+    console.error('connection eror:', error);
+  });
