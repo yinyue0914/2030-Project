@@ -9,8 +9,16 @@ npm install express
 npm install mongoose  
 npm install dotenv  
 npm install mongoose dotenv  
+npm install bcryptjs jsonwebtoken  (if not intalling, try doing it separately like mongoose and dotenv)  
+
+
 to run:  
 node server/app.js  ||   npm start  
+
+bcryptjs for pwd hasdhes
+jsonwebtoken for tokens
+
+
 
 2030-project  
 ===============  

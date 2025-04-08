@@ -1,8 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-require('dotenv').config();
-
+const authController = require('../controllers/authController');
 const blogController = require('../controllers/blogController');
 
 const app = express();
@@ -22,6 +22,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, '../views')));
 
 app.post('/api/blogs', blogController.createBlog);
+app.post('/api/register', authController.register);
+app.post('/api/login', authController.login);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/index.html'));
