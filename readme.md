@@ -11,7 +11,7 @@ npm install dotenv
 npm install mongoose dotenv  
 npm install bcryptjs jsonwebtoken  (if not intalling, try doing it separately like mongoose and dotenv)  
 
-
+ 
 to run:  
 node server/app.js  ||   npm start  
 
