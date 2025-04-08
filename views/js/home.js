@@ -4,10 +4,10 @@ const blogList = document.getElementById('blog-list');
 const loginStatus = document.getElementById('login-status');
 const logoutBtn = document.getElementById('logout-btn');
 const token = localStorage.getItem('token');
+const payload = token ? JSON.parse(atob(token.split('.')[1])) : null;
 
 if(token) {
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  loginStatus.textContent = `Logged in as: ${payload.username} (${payload.role})`;
+  loginStatus.textContent = `Logged in as: ${payload.username}(${payload.role})`;
   logoutBtn.classList.remove('d-none');
   if(payload.role === 'member' || payload.role === 'admin') {
     blogSection.style.display = 'block';
@@ -17,7 +17,7 @@ if(token) {
 }else {
   loginStatus.textContent = 'Not logged in';
   logoutBtn.classList.add('d-none');
-  blogSection.style.display ='none';
+  blogSection.style.display = 'none';     // hide if not correct user
 }
 
 logoutBtn.addEventListener('click', () => {
@@ -43,8 +43,8 @@ if (blogForm) {
       alert(result.message);
       e.target.reset();
       loadBlogs();
-    } catch (error) {
-      alert('error creating blog.');
+    }catch(error) {
+      alert('error creating blog');
       console.error(error);
     }
   });
@@ -66,37 +66,55 @@ async function loadBlogs() {
           <p class="card-text"><small class="text-muted">${new Date(blog.createdAt).toLocaleDateString()}</small></p>
         </div>
       `;
+      if (payload && payload.role === 'admin') {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+        deleteBtn.addEventListener('click', async () => {
+          const confirmed = confirm('Delete this blog post?');
+          if (confirmed) {
+            await fetch(`/api/blogs/${blog._id}`, {
+              method: 'DELETE',
+              headers: {'Authorization': `Bearer ${token}`}
+            });
+            loadBlogs();
+          }
+        });
+        div.querySelector('.card-body').appendChild(deleteBtn);
+      }
       blogList.appendChild(div);
     });
   } catch (err) {
     console.error('error loading blogs:', err);
   }
 }
-
 loadBlogs();
 
 const registerForm = document.getElementById('register-form');
+
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const username = e.target.username.value;
   const password = e.target.password.value;
+  const role = e.target.role.value;
+  
   try {
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({username, password})
+      body: JSON.stringify({username, password, role})      // need to speicfy which role
     });
     const data = await res.json();
     alert(data.message);
     e.target.reset();
-  }catch (error) {
+  } catch (error) {
     alert('registration failed');
     console.error(error);
   }
 });
 
 const loginForm = document.getElementById('login-form');
-loginForm.addEventListener('submit', async(e) => {
+loginForm.addEventListener('submit', async (e)=> {
   e.preventDefault();
   const username = e.target.username.value;
   const password = e.target.password.value;
@@ -104,7 +122,7 @@ loginForm.addEventListener('submit', async(e) => {
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({username, password})
+      body: JSON.stringify({username, password})      // logind oesnt need role, ur alrdy the role
     });
     const data = await res.json();
     if(res.ok) {
@@ -115,8 +133,8 @@ loginForm.addEventListener('submit', async(e) => {
       alert(data.message || 'login failed');
     }
     e.target.reset();
-  }catch (error) {
-    alert('login error');
+  } catch (error) {
+    alert('Llgin error');
     console.error(error);
   }
 });

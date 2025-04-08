@@ -1,5 +1,4 @@
 const Blog = require('../models/blogModel');
-
 const jwt = require('jsonwebtoken');
 
 exports.createBlog = async(req, res) => {
@@ -23,4 +22,32 @@ exports.createBlog = async(req, res) => {
 exports.getAllBlogs = async (req, res) => {
   const blogs = await Blog.find().sort({createdAt: -1});
   res.status(200).json(blogs);
+};
+
+exports.deleteBlog = async(req, res) => {
+  const blogId = req.params.id;
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if(!token) {
+    return res.status(401).json({message: 'unauthorized'});
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // this part is needed even though delet button is hiddne form non-admins
+    // only hidden, can stilla ccess it (somehow)
+    if(decoded.role !== 'admin') {
+      return res.status(403).json({message: 'for admin use only'});
+    }
+
+    const deleted = await Blog.findByIdAndDelete(blogId);
+    if(!deleted) {
+      return res.status(404).json({message: 'Blog not found'});
+    }
+
+    res.status(200).json({message: 'blog deleted'});
+  }catch(error) {
+    res.status(500).json({message: 'error deleting'});
+  }
 };

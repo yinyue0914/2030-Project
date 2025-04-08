@@ -30,6 +30,7 @@ app.post('/api/login', authController.login);
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../views/index.html'));
 });
+app.delete('/api/blogs/:id', blogController.deleteBlog);
 
 // this i copied from 2600, which is why theres nice msgs with emojis
 app.listen(PORT, () => {
