@@ -7,6 +7,10 @@ const blogSchema = new mongoose.Schema({
   author: {
       type: String,
       required: true
-  }
+  },
+  temperature: {
+    type: Number,
+    required: false
+  }  
 });
 module.exports = mongoose.model('Blog', blogSchema);
