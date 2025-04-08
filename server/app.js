@@ -22,6 +22,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, '../views')));
 
 app.post('/api/blogs', blogController.createBlog);
+app.get('/api/blogs', blogController.getAllBlogs);
+
 app.post('/api/register', authController.register);
 app.post('/api/login', authController.login);
 

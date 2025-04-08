@@ -41,10 +41,10 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            {userId: user._id, role: user.role},
+            {userId: user._id, username: user.username, role: user.role},       // make token have username -> no more 'undefined' names
             process.env.JWT_SECRET,
-            {expiresIn: '1h'}       // found this online
-        );
+            {expiresIn: '1h'}
+        );        
 
         res.status(200).json({message: 'login successful!', token});
     }catch (error) {
