@@ -10,18 +10,23 @@ exports.createBlog = async(req, res) => {
   }
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  let temperature = null;
-  const weatherRes = await axios.get(
-    `https://api.openweathermap.org/data/2.5/weather?q=Vancouver&units=metric&appid=${process.env.WEATHER_API}`
-  );
-  temperature = weatherRes.data.main.temp;
-  
+  // let temperature = null;
+  // const weatherRes = await axios.get(
+  //   `https://api.openweathermap.org/data/2.5/weather?q=Vancouver&units=metric&appid=${process.env.WEATHER_API}`
+  // );
+  // temperature = weatherRes.data.main.temp;
   const newBlog = new Blog({
     title,
     content,
     author: decoded.username,
-    temperature
   });
+  // const newBlog = new Blog({
+  //   title,
+  //   content,
+  //   author: decoded.username,
+  //   temperature
+  // });
+  
 
   await newBlog.save();
   res.status(201).json({message: 'blog post created!', data: newBlog});
